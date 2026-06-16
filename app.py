@@ -20,6 +20,18 @@ app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['SESSION_COOKIE_SECURE'] = False
 Session(app)
 
+@app.after_request
+def add_security_headers(response):
+    # Prevents clickjacking
+    response.headers['X-Frame-Options'] = 'DENY'
+    # Prevents MIME type sniffing
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    # Forces HTTPS in production
+    response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
+    # Controls referrer information
+    response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
+    return response
+
 # Rate limiter
 limiter = Limiter(
     app=app,
