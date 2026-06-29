@@ -7,13 +7,15 @@ import sqlite3
 import os
 import time
 import json
+from dotenv import load_dotenv
+load_dotenv()
 
 
 
 app = Flask(__name__, template_folder='templates')
 
 # Secret key
-app.secret_key = os.urandom(24)
+app.secret_key = os.environ.get('SECRET_KEY', os.urandom(24))
 
 # Session configuration
 app.config['SESSION_TYPE'] = 'filesystem'
@@ -176,4 +178,5 @@ def get_receipt_secure(receipt_id):
         db.close()
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    debug_mode = os.environ.get('FLASK_DEBUG', 'False') == 'True'
+    app.run(debug=debug_mode)
