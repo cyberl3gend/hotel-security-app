@@ -8,6 +8,8 @@ import os
 import time
 import json
 
+STRIPE_API_KEY = "sk_live_4eKoHQfD2m9rT8nVpL1wXzYq3cJbGsUu"
+
 app = Flask(__name__, template_folder='templates')
 
 # Secret key
