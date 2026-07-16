@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Grand Hotel – Dashboard</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f2f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      padding: 40px;
+      width: 460px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+
+    h1 {
+      font-size: 22px;
+      color: #1a1a2e;
+    }
+
+    .logout-btn {
+      background: none;
+      border: 1px solid #ddd;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 13px;
+      cursor: pointer;
+      color: #444;
+    }
+
+    .logout-btn:hover {
+      background: #f5f5f5;
+    }
+
+    .welcome {
+      background: #f0f2f5;
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+    }
+
+    .welcome p {
+      font-size: 14px;
+      color: #444;
+    }
+
+    .welcome span {
+      font-weight: 600;
+      color: #1a1a2e;
+    }
+
+    .session-info {
+      border: 1px solid #eee;
+      border-radius: 8px;
+      padding: 16px 20px;
+    }
+
+    .session-info h2 {
+      font-size: 14px;
+      color: #888;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .session-info p {
+      font-size: 13px;
+      color: #444;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .session-info span {
+      font-weight: 600;
+      color: #1a1a2e;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="header">
+      <h1>Grand Hotel</h1>
+      <form method="POST" action="/logout">
+        <button class="logout-btn" type="submit">Log out</button>
+      </form>
+    </div>
+
+    <div class="welcome">
+      <p>Welcome back, <span>{{ session['username'] }}</span>. You are now logged in.</p>
+    </div>
+
+    <div class="session-info">
+      <h2>Session data</h2>
+      <p>User ID <span>{{ session['user_id'] }}</span></p>
+      <p>Username <span>{{ session['username'] }}</span></p>
+      <p>Session cookie <span>server-side only</span></p>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,24 @@
+# ✅ SECURE VERSION — minimal Alpine base image
+FROM python:3.11-alpine
+
+# Set working directory
+WORKDIR /app
+
+# Create a non-root user — Principle of Least Privilege
+RUN addgroup -S hotelgroup && adduser -S hoteluser -G hotelgroup
+
+# Install dependencies
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+# Copy app files
+COPY . .
+
+# Switch to non-root user
+USER hoteluser
+
+# Expose port
+EXPOSE 5000
+
+# Run the app
+CMD ["python", "app.py"]
