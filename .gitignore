@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Virtual environment
 venv/
 
@@ -21,4 +22,29 @@ Thumbs.db
 
 # IDE files
 .cursor/
+=======
+# Virtual environment
+venv/
+
+# Database — never commit user data
+hotel.db
+
+# Session files
+flask_session/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Environment variables — secrets live here
+.env
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.cursor/
+>>>>>>> e0f3130fb05f3976122440c8135c0fd0c31b9a8e
 .vscode/

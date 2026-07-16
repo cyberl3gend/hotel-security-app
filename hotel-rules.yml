@@ -1,0 +1,14 @@
+rules:
+  - id: missing-ownership-check
+    patterns:
+      - pattern: |
+          db.execute("SELECT * FROM bookings WHERE id = ?", ...)
+    message: |
+      Potential IDOR vulnerability — this query fetches a booking by ID
+      without checking if the current user owns it.
+      Ensure booking['user_id'] == session['user_id'] before returning data.
+    languages: [python]
+    severity: ERROR
+    metadata:
+      category: security
+      owasp: "A03:2021 - Broken Access Control"
