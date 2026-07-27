@@ -1,0 +1,143 @@
+name: Hotel App Security Pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  secret-scanning:
+    name: TruffleHog Secret Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: TruffleHog scan
+        uses: trufflesecurity/trufflehog@main
+        with:
+          path: ./
+          base: main
+          head: HEAD
+
+sast-scanning:
+    name: Semgrep SAST Scan
+    runs-on: ubuntu-latest
+    needs: secret-scanning
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Semgrep scan
+        uses: semgrep/semgrep-action@v1
+        with:
+          config: >-
+            p/python
+            p/flask
+            p/secrets
+
+docker-build-scan:
+    name: Docker Build and Trivy Scan
+    runs-on: ubuntu-latest
+    needs: sast-scanning
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -f Dockerfile.alpine -t hotel-app:${{ github.sha }} .
+
+      - name: Trivy vulnerability scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: hotel-app:${{ github.sha }}
+          format: table
+          exit-code: 1
+          severity: CRITICAL
+
+dast-scanning:
+    name: OWASP ZAP DAST Scan
+    runs-on: ubuntu-latest
+    needs: docker-build-scan
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Start hotel app
+        run: |
+          docker run -d \
+            -p 5000:5000 \
+            -e SECRET_KEY=pipeline-test-key \
+            -e FLASK_DEBUG=False \
+            --name hotel-test \
+            hotel-app:${{ github.sha }}
+          sleep 10
+
+      - name: Wait for app to be ready
+        run: |
+          for i in {1..30}; do
+            curl -s http://localhost:5000 && break
+            sleep 2
+          done
+
+      - name: OWASP ZAP scan
+        uses: zaproxy/action-baseline@v0.12.0
+        with:
+          target: http://localhost:5000
+          fail_action: false
+
+      - name: Stop hotel app
+        run: docker stop hotel-test
+
+sbom-generation:
+    name: Generate SBOM
+    runs-on: ubuntu-latest
+    needs: docker-build-scan
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Syft
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+
+      - name: Generate SBOM
+        run: |
+          syft hotel-app:${{ github.sha }} -o cyclonedx-json > sbom.json
+
+      - name: Upload SBOM artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom-report
+          path: sbom.json
+
+upload-reports:
+    name: Upload Security Reports to S3
+    runs-on: ubuntu-latest
+    needs: [dast-scanning, sbom-generation]
+    steps:
+      - name: Download SBOM artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: sbom-report
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Upload SBOM to S3
+        run: |
+          aws s3 cp sbom.json s3://hotel-security-reports/${{ github.sha }}/sbom.json
+
+      - name: Upload pipeline summary
+        run: |
+          echo "Pipeline run: ${{ github.sha }}" > summary.txt
+          echo "Timestamp: $(date)" >> summary.txt
+          echo "Branch: ${{ github.ref }}" >> summary.txt
+          aws s3 cp summary.txt s3://hotel-security-reports/${{ github.sha }}/summary.txt
