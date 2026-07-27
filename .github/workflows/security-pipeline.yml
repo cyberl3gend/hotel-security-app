@@ -65,25 +65,28 @@ jobs:
       - name: Start hotel app
         run: |
           docker run -d \
-            -p 5000:5000 \
+            --network host \
             -e SECRET_KEY=pipeline-test-key \
             -e FLASK_DEBUG=False \
             --name hotel-test \
             hotel-app:${{ github.sha }}
-          sleep 10
+          sleep 15
       - name: Wait for app to be ready
         run: |
           for i in {1..30}; do
-            curl -s http://localhost:5000 && break
-            sleep 2
+            curl -sf http://localhost:5000 && break
+            echo "Waiting for app... attempt $i"
+            sleep 3
           done
       - name: OWASP ZAP scan
         uses: zaproxy/action-baseline@v0.12.0
         with:
           target: http://localhost:5000
           fail_action: false
+          allow_issue_writing: false
       - name: Stop hotel app
-        run: docker stop hotel-test
+        if: always()
+        run: docker stop hotel-test || true
 
   sbom-generation:
     name: Generate SBOM
