@@ -85,6 +85,7 @@ jobs:
           target: http://localhost:5000
           fail_action: false
           allow_issue_writing: false
+          cmd_options: '-I'
       - name: Stop hotel app
         if: always()
         run: docker stop hotel-test || true
