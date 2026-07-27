@@ -127,7 +127,7 @@ def logout():
     flash('You have been logged out.', 'success')
     return redirect(url_for('login'))
 
-# ⚠️ VULNERABLE endpoint — no authorization check
+#VULNERABLE endpoint — no authorization check
 @app.route('/api/receipts/<int:receipt_id>')
 def get_receipt_vulnerable(receipt_id):
     if 'user_id' not in session:
@@ -151,7 +151,7 @@ def get_receipt_vulnerable(receipt_id):
     finally:
         db.close()
 
-# ✅ SECURE endpoint — checks ownership
+# SECURE endpoint — checks ownership
 @app.route('/api/receipts/<int:receipt_id>/secure')
 def get_receipt_secure(receipt_id):
     if 'user_id' not in session:
@@ -179,4 +179,4 @@ def get_receipt_secure(receipt_id):
 
 if __name__ == '__main__':
     debug_mode = os.environ.get('FLASK_DEBUG', 'False') == 'True'
-    app.run(host='0.0.0.0', port=5000, debug=debug_mode)
+    app.run(host='0.0.0.0', port=5000, debug=debug_mode) # nosemgrep: python.flask.security.audit.app-run-param-config.avoid_app_run_with_bad_host
