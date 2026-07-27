@@ -14,6 +14,9 @@ RUN pip install -r requirements.txt
 # Copy app files
 COPY . .
 
+RUN mkdir -p /app/flask_session && \
+    chown -R hoteluser:hotelgroup /app
+
 # Switch to non-root user
 USER hoteluser
 
