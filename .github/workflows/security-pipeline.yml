@@ -71,13 +71,14 @@ jobs:
             --name hotel-test \
             hotel-app:${{ github.sha }}
           sleep 15
-      - name: Wait for app to be ready
+      - name: Check container logs
+        run: docker logs hotel-test
+      - name: Check if app is listening
         run: |
-          for i in {1..30}; do
-            curl -sf http://localhost:5000 && break
-            echo "Waiting for app... attempt $i"
-            sleep 3
-          done
+          echo "Checking open ports:"
+          ss -tlnp | grep 5000 || echo "Port 5000 not listening"
+          echo "Checking curl:"
+          curl -v http://localhost:5000 || echo "Curl failed"
       - name: OWASP ZAP scan
         uses: zaproxy/action-baseline@v0.12.0
         with:
