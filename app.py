@@ -26,13 +26,18 @@ app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['SESSION_COOKIE_SECURE'] = False
 Session(app)
 
+def get_rate_limit_key():
+    #Dont rate limit Prometheus scraping from local host
+    if request.remote_addr in ['127.0.0.1','100.53.255.37']:
+        return None
+    return request.remote_addr
+
 # Rate limiter
 limiter = Limiter(
     app=app,
     key_func=get_remote_address,
     default_limits=["200 per day", "50 per hour"]
 )
-limiter.exempt(metrics)
 
 def get_db():
     conn = sqlite3.connect('hotel.db', timeout=10)
