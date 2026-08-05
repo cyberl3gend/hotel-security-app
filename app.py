@@ -31,8 +31,8 @@ limiter = Limiter(
     app=app,
     key_func=get_remote_address,
     default_limits=["200 per day", "50 per hour"]
-    limiter.exempt(metrics)
 )
+limiter.exempt(metrics)
 
 def get_db():
     conn = sqlite3.connect('hotel.db', timeout=10)
