@@ -3,3 +3,4 @@ flask-session==0.8.0
 flask-limiter==3.8.0
 bcrypt==5.0.0
 python-dotenv==1.2.2
+prometheus-flask-exporter==0.23.1

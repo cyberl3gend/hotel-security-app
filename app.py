@@ -8,11 +8,13 @@ import os
 import time
 import json
 from dotenv import load_dotenv
+from prometheus_flask_exporter import PrometheusMetrics
 load_dotenv()
 
 
 
 app = Flask(__name__, template_folder='templates')
+metrics = PrometheusMetrics(app)
 
 # Secret key
 app.secret_key = os.environ.get('SECRET_KEY', os.urandom(24))
