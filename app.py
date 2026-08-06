@@ -28,7 +28,7 @@ Session(app)
 
 def get_rate_limit_key():
     #Dont rate limit Prometheus scraping from local host
-    if request.remote_addr in ['127.0.0.1','100.53.225.37']:
+    if request.remote_addr in ['127.0.0.1','18.215.126.59']:
         return None
     return request.remote_addr
 

@@ -1,0 +1,29 @@
+groups:
+  - name: hotel_app_alerts
+    rules:
+      - alert: HighErrorRate
+        expr: rate(flask_http_request_total{status=~"5.."}[5m]) > 0.1
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High error rate detected"
+          description: "Hotel app is returning more than 10% 5xx errors"
+
+      - alert: HighLoginFailures
+        expr: rate(flask_http_request_total{endpoint="/login", status="401"}[5m]) > 0.5
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High login failure rate"
+          description: "More than 0.5 failed logins per second - possible credential stuffing"
+
+      - alert: AppDown
+        expr: up{job="hotel-app"} == 0
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Hotel app is down"
+          description: "Prometheus cannot scrape the hotel app metrics endpoint"

@@ -1,0 +1,17 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ['alertmanager:9093']
+
+rule_files:
+  - "alert_rules.yml"
+
+scrape_configs:
+  - job_name: 'hotel-app'
+    static_configs:
+      - targets: ['18.215.126.59:5000']
+    metrics_path: '/metrics'
