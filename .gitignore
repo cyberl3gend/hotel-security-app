@@ -45,4 +45,5 @@ Thumbs.db
 
 # IDE files
 .cursor/
-.vscode/monitoring/alertmanager.yml
+.vscode/
+monitoring/alertmanager.yml
