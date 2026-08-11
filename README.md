@@ -56,3 +56,28 @@ This isn't a tutorial follow-along. Every vulnerability was built, exploited, an
 - Alertmanager routing alerts to Slack — AppDown, HighErrorRate, HighLoginFailures
 
 ## The CI/CD Pipeline
+
+## Weekly Blog Posts
+
+Each week has a detailed writeup covering the attack, the defense, the lab, and the lessons:
+
+| Week | Topic | Key Concept |
+|------|-------|-------------|
+| 1 | HTML Security & Input Validation | XSS prevention, innerHTML vs textContent |
+| 2 | UI Layer Attacks | Clickjacking, CSS exfiltration, SRI |
+| 3 | Broken Authentication | bcrypt, sessions, credential stuffing |
+| 4 | Secure API Design | IDOR, authorization vs authentication |
+| 5 | Git Security | Branch protection, secret management |
+| 6 | SAST with Semgrep | Automated code scanning, custom rules |
+| 7 | Secrets Management | TruffleHog, Git history scanning, .env |
+| 8 | Containerization | Docker, Alpine, Trivy, non-root user |
+| 9 | Cloud Infrastructure | AWS VPC, Zero-Trust Architecture |
+| 10 | Firewall Management | Network ACLs, WAF, defense in depth |
+| 11 | Infrastructure as Code | Terraform, GitOps for infrastructure |
+| 13 | CI/CD Security Pipeline | GitHub Actions, SBOM, S3 compliance |
+| 14 | Continuous Deployment | GitOps, automated deployment |
+| 15 | Observability | Prometheus, Grafana, Alertmanager |
+
+## Resume Keywords
+
+`DevSecOps` `Shift-Left Security` `SAST` `DAST` `Secret Detection` `Container Hardening` `Infrastructure as Code` `CI/CD` `Zero-Trust Architecture` `SBOM` `Threat Modeling` `AWS` `Terraform` `Docker` `GitHub Actions` `Python` `Flask` `Prometheus` `Grafana`
