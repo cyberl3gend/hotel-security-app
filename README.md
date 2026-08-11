@@ -1,16 +1,58 @@
-# Hotel Security App
+# Hotel Security App — 16-Week DevSecOps Portfolio Sprint
 
-A deliberately vulnerable hotel booking application built to demonstrate common web security vulnerabilities and their fixes.
+A deliberately vulnerable hotel booking application built and progressively secured over 16 weeks, demonstrating end-to-end DevSecOps practices from secure coding to automated CI/CD security pipelines.
 
-## Vulnerabilities Demonstrated
-- Clickjacking
-- CSS Attribute Exfiltration
-- Subresource Integrity (SRI)
-- Broken Authentication (OWASP A01)
-- IDOR - Insecure Direct Object Reference (OWASP A03)
+## What This Project Demonstrates
 
-## Tech Stack
-- Python, Flask, SQLite, bcrypt
+This isn't a tutorial follow-along. Every vulnerability was built, exploited, and fixed hands-on — then documented with real screenshots, working code, and blog writeups explaining the why behind every decision.
 
-## Author
-Built as part of a 16-week cybersecurity portfolio sprint.
+## The Stack
+
+**Application:** Python, Flask, SQLite, bcrypt  
+**Infrastructure:** AWS (VPC, EC2, Security Groups, Network ACLs, WAF, S3)  
+**IaC:** Terraform  
+**Containers:** Docker, Alpine base image  
+**CI/CD:** GitHub Actions  
+**Security Scanning:** Semgrep, TruffleHog, Trivy, OWASP ZAP  
+**Observability:** Prometheus, Grafana, Alertmanager  
+**SBOM:** Syft (CycloneDX format)  
+
+## Security Controls Implemented
+
+### Application Layer
+- Parameterized queries preventing SQL injection
+- bcrypt password hashing with automatic salting
+- Server-side session management with HttpOnly + SameSite cookie flags
+- Rate limiting and account lockout against credential stuffing
+- IDOR prevention with ownership verification on every API endpoint
+
+### UI Layer
+- Clickjacking prevention via X-Frame-Options and CSP headers
+- CSS attribute exfiltration prevention via Content Security Policy
+- Subresource Integrity (SRI) for third-party script verification
+
+### Container Layer
+- Alpine minimal base image (175MB vs 689MB Ubuntu — 75% attack surface reduction)
+- Non-root user (hoteluser) with least privilege
+- .dockerignore preventing secrets from entering image
+- Trivy scanning blocking CRITICAL CVEs before deployment
+
+### Infrastructure Layer
+- AWS VPC with public/private subnet segmentation
+- Security Groups with default deny, explicit allow
+- Network ACLs at subnet boundary (stateless, defense in depth)
+- AWS WAF with Core Rule Set and SQL injection rules
+- Zero-Trust Architecture applied at every layer
+
+### Pipeline Layer
+- 7-stage automated security pipeline on every push to main
+- TruffleHog → Semgrep → Docker/Trivy → OWASP ZAP → SBOM → S3 → Deploy
+- Branch protection requiring PR review before merge to main
+- SBOM and scan artifacts stored in S3 by commit hash for compliance audit trail
+
+### Observability Layer
+- Prometheus scraping application metrics every 15 seconds
+- Grafana dashboard with HTTP request rate, error rate, rate-limited requests
+- Alertmanager routing alerts to Slack — AppDown, HighErrorRate, HighLoginFailures
+
+## The CI/CD Pipeline
